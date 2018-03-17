@@ -77,7 +77,10 @@ export class LoginScreen extends Component {
             this.props.authUser(email, password);
         }
     };
-
+    componentDidMount() {
+        ///TODO: REMOVE 
+        this.props.authUser('wellingtonmb888@gmail.com', '123456');
+    }
     render() {
         const { token, showError, loading } = this.props;
         if (showError) {

@@ -29,12 +29,14 @@ function isJsonString(str) {
     return true;
 };
 
-export const getAllOrders = (token) => dispatch => (
+export const getAllOrders = (token) => dispatch => {
+    dispatch(LoadingActions.startLoading())
     PlaceYourOrderApi.getAllOrders(token)
         .then(orders => {
+            dispatch(LoadingActions.stopLoading());
             dispatch(loadAllOrders(orders));
         })
-);
+};
 
 export const placeOrder = (token, order) => dispatch => {
     dispatch(LoadingActions.startLoading());

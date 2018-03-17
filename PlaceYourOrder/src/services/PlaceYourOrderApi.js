@@ -35,11 +35,11 @@ export const placeOrder = (token, order) =>
         });
 
 export const getAllOrders = (token) =>
-    fetch(`${api}/api/v1/Order`,
+    fetch(`${api}/api/v1/order/customer`,
         {
             method: 'get',
             headers: { 'Content-Type': 'application/json', Authorization: token }
         })
         .then(data => {
-            return data._bodyInit;
+            return JSON.parse(data._bodyInit);
         });
