@@ -11,3 +11,15 @@ export const authCustomer = (email, password) =>
         .then(data => {
             return data._bodyInit;
         });
+
+
+export const getProductList = (token) =>
+    fetch(`${api}/api/v1/Product`,
+        {
+            method: 'get',
+            headers: { 'Content-Type': 'application/json' },
+            Authorization: token
+        })
+        .then(data => {
+            return data._bodyInit;
+        });

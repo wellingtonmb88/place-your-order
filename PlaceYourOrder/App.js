@@ -7,6 +7,7 @@ import { Constants } from 'expo';
 import * as LoginReducers from './src/reducers/LoginReducers';
 import * as LoadingReducers from './src/reducers/LoadingReducers';
 import * as ErrorReducers from './src/reducers/ErrorReducers';
+import * as ProductReducers from './src/reducers/ProductReducers';
 import { HomeTabNavigator } from './src/components/HomeTabNavigator';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import { StackNavigator } from 'react-navigation'
@@ -21,10 +22,11 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const loginReducer = LoginReducers.reducer;
 const loadingReducer = LoadingReducers.reducer;
 const errorReducer = ErrorReducers.reducer;
+const productReducer = ProductReducers.reducer;
 
 const configureStore = () => {
   const store = createStore(
-    combineReducers({ loginReducer, loadingReducer, errorReducer }),
+    combineReducers({ loginReducer, loadingReducer, errorReducer, productReducer }),
     composeEnhancers(
       applyMiddleware(logger, thunk)
     )
