@@ -9,6 +9,7 @@ import * as LoadingReducers from './src/reducers/LoadingReducers';
 import * as ErrorReducers from './src/reducers/ErrorReducers';
 import * as ProductReducers from './src/reducers/ProductReducers';
 import * as CartReducers from './src/reducers/CartReducers';
+import * as OrderReducers from './src/reducers/OrderReducers';
 import { HomeTabNavigator } from './src/components/HomeTabNavigator';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import { StackNavigator } from 'react-navigation'
@@ -26,10 +27,14 @@ const loadingReducer = LoadingReducers.reducer;
 const errorReducer = ErrorReducers.reducer;
 const productReducer = ProductReducers.reducer;
 const cartReducer = CartReducers.reducer;
+const orderReducer = OrderReducers.reducer;
 
 const configureStore = () => {
   const store = createStore(
-    combineReducers({ loginReducer, loadingReducer, errorReducer, productReducer, cartReducer }),
+    combineReducers({
+      loginReducer, loadingReducer, errorReducer,
+      productReducer, cartReducer, orderReducer
+    }),
     composeEnhancers(
       applyMiddleware(thunk)
     )

@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-    StyleSheet, View, Text, FlatList, ActivityIndicator
+    StyleSheet, View, Text, FlatList, ActivityIndicator,Alert
 } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
@@ -11,13 +11,13 @@ import If from '../If';
 import CustomButton from '../CustomButton';
 import CartProductItem from '../CartProductItem';
 import { Entypo } from '@expo/vector-icons';
-import * as CartService from '../../services/CartService';
 import * as CartActions from '../../actions/CartActions';
+import * as OrderActions from '../../actions/OrderActions';
 
 export class CartListScreen extends Component {
     static navigationOptions = {
         tabBarLabel: "Cart List",
-        tabBarIcon: () => <Entypo size={24} name="blackboard" color="white" />
+        tabBarIcon: () => <Entypo size={24} name="shopping-cart" color="white" />
     };
 
     componentDidMount() {
@@ -31,7 +31,7 @@ export class CartListScreen extends Component {
             product={item}
             _onPress={() => {
                 this.props.removeProductFromCart(item.id);
-             }}
+            }}
         />
     );
 
@@ -43,16 +43,84 @@ export class CartListScreen extends Component {
         return Object.keys(cart).map(key => {
             return {
                 id: key,
+                storeId: cart[key].storeId,
                 name: cart[key].name,
                 price: cart[key].price
             }
         }).filter(item => item !== undefined)
     };
 
+    _getTotalPrice = (cartList) => {
+        if (cartList == undefined || cartList == null) {
+            return 0;
+        }
+        let total = 0;
+        cartList.forEach(p => {
+            total += p.price;
+        });
+        return total;
+    };
+
+    _handlePlaceOrder = () => {
+        const cartList = this._cartItemExtractor();
+        if (cartList == undefined || cartList == null) {
+            return;
+        }
+        const { cleanCart, placeOrder, token } = this.props;
+        cleanCart();
+        cartList.forEach(p => {
+            const order = {
+                "deliveryAddress": "Sao paulo",
+                "contact": "1999688144",
+                "storeId": p.storeId,
+                "orderItems": [{
+                    "productId": p.id,
+                    "product": p,
+                    "price": p.price,
+                    "quantity": 1,
+                    "total": p.price
+                }],
+                "status": "WAITING"
+            }
+            placeOrder(token, order);
+        })
+    };
+
+    _showPlaceOrderError = () => {
+        const { error, showError } = this.props;
+        if (!error || !showError) {
+            return;
+        }
+        Alert.alert(
+            'Error place your Order',
+            error,
+            [
+                { text: 'OK', onPress: () => { this.props.hideError(); } },
+            ],
+            { cancelable: true }
+        )
+    };
+
+    _showPlaceOrderSuccess = () => {
+        Alert.alert(
+            'Great news!',
+            'Your order was placed!',
+            [
+                { text: 'OK', onPress: () => { this.props.hideError(); } },
+            ],
+            { cancelable: true }
+        )
+    };
 
     render() {
-        const { loading } = this.props;
-        const cartList = this._cartItemExtractor()
+        const { loading, showError, successReducer } = this.props;
+        const cartList = this._cartItemExtractor();
+        if (showError) {
+            this._showPlaceOrderError();
+        }
+        if (successReducer && !loading) {
+            this._showPlaceOrderSuccess();
+        }
         return (
             <View style={styles.container}>
                 <If test={loading === true}>
@@ -61,12 +129,21 @@ export class CartListScreen extends Component {
                         size={100} color="blue" />
                 </If>
                 <If test={loading != true}>{cartList.length < 1 ?
-                    <Text style={styles.productEmpty}>Oops! No products to show in your Cart!</Text> :
+                    <Text style={styles.productEmpty}>No products to show in your Cart!</Text> :
                     <FlatList
                         renderItem={this._renderItem}
                         keyExtractor={this._keyExtractor}
                         data={cartList}
                     />}
+                </If>
+                <If test={loading != true && cartList.length > 0}>{
+                    <CustomButton
+                        buttonStyles={StyleSheet.flatten([styles.button])}
+                        textStyles={styles.buttonTitle}
+                        disabled={false}
+                        text={`Place Order | Total: $ ${this._getTotalPrice(cartList)}`}
+                        _onPress={this._handlePlaceOrder} />
+                }
                 </If>
             </View>
         )
@@ -77,6 +154,8 @@ const mapStateToProps = (state) => ({
     token: state.loginReducer.token,
     products: state.productReducer.products,
     cart: state.cartReducer.cart,
+    orderError: state.orderReducer.error,
+    successReducer: state.orderReducer.success,
     error: state.loginReducer.error,
     showError: state.errorReducer.show,
     loading: state.loadingReducer.loading
@@ -85,7 +164,10 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
     return {
         getCartList: () => dispatch(CartActions.getAllCart()),
-        removeProductFromCart: (id) => dispatch(CartActions.deleteProductFromCart(id))
+        removeProductFromCart: (id) => dispatch(CartActions.deleteProductFromCart(id)),
+        cleanCart: (id) => dispatch(CartActions.deleteAllCart()),
+        placeOrder: (token, order) => dispatch(OrderActions.placeOrder(token, order)),
+        hideError: () => dispatch(ErrorActions.hideError())
     }
 };
 
@@ -97,15 +179,15 @@ const styles = StyleSheet.create({
     },
     button: {
         padding: 10,
-        marginTop: 30,
-        marginLeft: 30,
-        marginRight: 30,
-        height: 50,
+        marginTop: 10,
+        marginLeft: 10,
+        marginRight: 10,
+        height: 40,
         borderRadius: 3,
         alignSelf: 'stretch',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'gray'
+        backgroundColor: 'green'
     },
     buttonTitle: {
         fontSize: 16,

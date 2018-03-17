@@ -43,6 +43,7 @@ export class ProductListScreen extends Component {
         return Object.keys(products).map(key => {
             return {
                 id: key,
+                storeId: products[key].storeId,
                 name: products[key].name,
                 price: products[key].price
             }

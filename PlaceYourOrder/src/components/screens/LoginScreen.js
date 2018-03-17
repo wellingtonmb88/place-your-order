@@ -83,41 +83,41 @@ export class LoginScreen extends Component {
         if (showError) {
             this._showLoginError();
         }
-        
+
         return (
             <View style={styles.container}>
                 <If test={token !== undefined}>
                     <HomeTabNavigator />
                 </If>
                 <If test={token === undefined}>
-                        <If test={loading === true}>
-                            <ActivityIndicator
-                                style={styles.activityIndicator}
-                                size={100} color="blue" />
-                        </If>
-                        <If test={loading != true}  >
-                            <TextInput
-                                style={styles.textInput}
-                                onChangeText={this._handleEmailChange}
-                                placeholder='Email'
-                                value={this.state.email}
-                            />
-                            <Text style={{ color: 'red' }}> {this.state.errorEmail}</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                onChangeText={this._handlePasswordChange}
-                                placeholder='Password'
-                                secureTextEntry={true}
-                                value={this.state.password}
-                            />
-                            <Text style={{ color: 'red' }}> {this.state.errorPassword}</Text>
-                            <CustomButton
-                                buttonStyles={StyleSheet.flatten([styles.button])}
-                                textStyles={styles.buttonTitle}
-                                disabled={false}
-                                text='Sign In'
-                                _onPress={this._handleLogin} />
-                        </If>
+                    <If test={loading === true}>
+                        <ActivityIndicator
+                            style={styles.activityIndicator}
+                            size={100} color="blue" />
+                    </If>
+                    <If test={loading != true}  >
+                        <TextInput
+                            style={styles.textInput}
+                            onChangeText={this._handleEmailChange}
+                            placeholder='Email'
+                            value={this.state.email}
+                        />
+                        <Text style={{ color: 'red' }}> {this.state.errorEmail}</Text>
+                        <TextInput
+                            style={styles.textInput}
+                            onChangeText={this._handlePasswordChange}
+                            placeholder='Password'
+                            secureTextEntry={true}
+                            value={this.state.password}
+                        />
+                        <Text style={{ color: 'red' }}> {this.state.errorPassword}</Text>
+                        <CustomButton
+                            buttonStyles={StyleSheet.flatten([styles.button])}
+                            textStyles={styles.buttonTitle}
+                            disabled={false}
+                            text='Sign In'
+                            _onPress={this._handleLogin} />
+                    </If>
                 </If>
             </View>
         )

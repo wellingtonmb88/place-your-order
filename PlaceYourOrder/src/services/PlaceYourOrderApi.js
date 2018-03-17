@@ -17,8 +17,28 @@ export const getProductList = (token) =>
     fetch(`${api}/api/v1/Product`,
         {
             method: 'get',
-            headers: { 'Content-Type': 'application/json' },
-            Authorization: token
+            headers: { 'Content-Type': 'application/json', Authorization: token }
+        })
+        .then(data => {
+            return data._bodyInit;
+        });
+
+export const placeOrder = (token, order) =>
+    fetch(`${api}/api/v1/Order`,
+        {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json', Authorization: token },
+            body: JSON.stringify(order)
+        })
+        .then(data => {
+            return data._bodyInit;
+        });
+
+export const getAllOrders = (token) =>
+    fetch(`${api}/api/v1/Order`,
+        {
+            method: 'get',
+            headers: { 'Content-Type': 'application/json', Authorization: token }
         })
         .then(data => {
             return data._bodyInit;
