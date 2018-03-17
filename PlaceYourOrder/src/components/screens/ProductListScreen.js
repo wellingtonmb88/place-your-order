@@ -11,6 +11,8 @@ import If from '../If';
 import CustomButton from '../CustomButton';
 import ProductItem from '../ProductItem';
 import { Entypo } from '@expo/vector-icons';
+import * as CartService from '../../services/CartService';
+import * as CartActions from '../../actions/CartActions';
 
 export class ProductListScreen extends Component {
     static navigationOptions = {
@@ -27,7 +29,9 @@ export class ProductListScreen extends Component {
     _renderItem = ({ item }) => (
         <ProductItem
             product={item}
-            _onPress={() => { }}
+            _onPress={() => {
+                this.props.addProductToCart(item);
+             }}
         />
     );
 
@@ -48,6 +52,7 @@ export class ProductListScreen extends Component {
             }
         }).filter(item => item !== undefined)
     };
+
 
     render() {
         const { loading } = this.props;
@@ -82,7 +87,8 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
     return {
-        getProductList: () => dispatch(ProductActions.getProductList())
+        getProductList: () => dispatch(ProductActions.getProductList()),
+        addProductToCart: (product) => dispatch(CartActions.addProductToCart(product))
     }
 };
 

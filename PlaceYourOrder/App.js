@@ -8,6 +8,7 @@ import * as LoginReducers from './src/reducers/LoginReducers';
 import * as LoadingReducers from './src/reducers/LoadingReducers';
 import * as ErrorReducers from './src/reducers/ErrorReducers';
 import * as ProductReducers from './src/reducers/ProductReducers';
+import * as CartReducers from './src/reducers/CartReducers';
 import { HomeTabNavigator } from './src/components/HomeTabNavigator';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import { StackNavigator } from 'react-navigation'
@@ -17,20 +18,27 @@ import logger from 'redux-logger';
 import { Font } from 'expo';
 import LoginScreen from './src/components/screens/LoginScreen';
 import ProductListScreen from './src/components/screens/ProductListScreen';
+import * as CartService from './src/services/CartService';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const loginReducer = LoginReducers.reducer;
 const loadingReducer = LoadingReducers.reducer;
 const errorReducer = ErrorReducers.reducer;
 const productReducer = ProductReducers.reducer;
+const cartReducer = CartReducers.reducer;
 
 const configureStore = () => {
   const store = createStore(
-    combineReducers({ loginReducer, loadingReducer, errorReducer, productReducer }),
+    combineReducers({ loginReducer, loadingReducer, errorReducer, productReducer, cartReducer }),
     composeEnhancers(
       applyMiddleware(logger, thunk)
     )
   );
+  
+  store.subscribe(() => {
+    CartService.saveProductsToCart(store.getState().cart)
+  });
+
   return store;
 };
 
