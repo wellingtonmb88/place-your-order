@@ -31,12 +31,13 @@ const configureStore = () => {
   const store = createStore(
     combineReducers({ loginReducer, loadingReducer, errorReducer, productReducer, cartReducer }),
     composeEnhancers(
-      applyMiddleware(logger, thunk)
+      applyMiddleware(thunk)
     )
   );
-  
+
   store.subscribe(() => {
-    CartService.saveProductsToCart(store.getState().cart)
+    const cart = store.getState().cartReducer.cart;
+    CartService.saveCart(cart);
   });
 
   return store;
@@ -44,7 +45,7 @@ const configureStore = () => {
 
 const CustomStatusBar = ({ backgroundColor, ...props }) => {
   return (
-    <View style={{ backgroundColor, height: Constants.statusBarHeight }}>
+    <View style={{ backgroundColor, height: 10 }}>
       <StatusBar translucent backgroundColor={backgroundColor} {...props} />
     </View>
   )

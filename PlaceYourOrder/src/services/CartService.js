@@ -6,8 +6,8 @@ export function fetchAllCart() {
     return AsyncStorage.getItem(CART_KEY);
 };
 
-export function saveProductsToCart(products) {
-    AsyncStorage.setItem(CART_KEY, JSON.stringify(products));
+export function saveCart(cart) {
+    AsyncStorage.setItem(CART_KEY, JSON.stringify(cart));
 };
 
 export function clearAllCart() {

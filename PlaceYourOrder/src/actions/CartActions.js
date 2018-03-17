@@ -33,14 +33,16 @@ function removeProductFromCart(id) {
 
 export const getAllCart = () => dispatch => (
     CartService.fetchAllCart()
-        .then(cart => dispatch(loadAllCart(JSON.parse(cart))))
+        .then(cart => {
+            dispatch(loadAllCart(JSON.parse(cart)))
+        })
 );
 
 export const addProductToCart = (product) => dispatch => {
     dispatch(_addProductToCart(product));
 };
 
-export const deleteDeck = (id) => dispatch => {
+export const deleteProductFromCart = (id) => dispatch => {
     dispatch(removeProductFromCart(id));
 };
 

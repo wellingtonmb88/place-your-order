@@ -9,42 +9,42 @@ import * as ProductActions from '../../actions/ProductActions';
 import * as ErrorActions from '../../actions/ErrorActions';
 import If from '../If';
 import CustomButton from '../CustomButton';
-import ProductItem from '../ProductItem';
+import CartProductItem from '../CartProductItem';
 import { Entypo } from '@expo/vector-icons';
 import * as CartService from '../../services/CartService';
 import * as CartActions from '../../actions/CartActions';
 
-export class ProductListScreen extends Component {
+export class CartListScreen extends Component {
     static navigationOptions = {
-        tabBarLabel: "Product List",
+        tabBarLabel: "Cart List",
         tabBarIcon: () => <Entypo size={24} name="blackboard" color="white" />
     };
 
     componentDidMount() {
-        this.props.getProductList();
+        this.props.getCartList();
     };
 
     _keyExtractor = (item, index) => item.id;
 
     _renderItem = ({ item }) => (
-        <ProductItem
+        <CartProductItem
             product={item}
             _onPress={() => {
-                this.props.addProductToCart(item);
+                this.props.removeProductFromCart(item.id);
              }}
         />
     );
 
-    _productItemExtractor = () => {
-        const products = this.props.products;
-        if (products === undefined || products === null) {
+    _cartItemExtractor = () => {
+        const cart = this.props.cart;
+        if (cart === undefined || cart === null) {
             return [];
         }
-        return Object.keys(products).map(key => {
+        return Object.keys(cart).map(key => {
             return {
                 id: key,
-                name: products[key].name,
-                price: products[key].price
+                name: cart[key].name,
+                price: cart[key].price
             }
         }).filter(item => item !== undefined)
     };
@@ -52,7 +52,7 @@ export class ProductListScreen extends Component {
 
     render() {
         const { loading } = this.props;
-        const productList = this._productItemExtractor()
+        const cartList = this._cartItemExtractor()
         return (
             <View style={styles.container}>
                 <If test={loading === true}>
@@ -60,12 +60,12 @@ export class ProductListScreen extends Component {
                         style={styles.activityIndicator}
                         size={100} color="blue" />
                 </If>
-                <If test={loading != true}>{productList.length < 1 ?
-                    <Text style={styles.productEmpty}>Oops! No products to show!</Text> :
+                <If test={loading != true}>{cartList.length < 1 ?
+                    <Text style={styles.productEmpty}>Oops! No products to show in your Cart!</Text> :
                     <FlatList
                         renderItem={this._renderItem}
                         keyExtractor={this._keyExtractor}
-                        data={productList}
+                        data={cartList}
                     />}
                 </If>
             </View>
@@ -76,6 +76,7 @@ export class ProductListScreen extends Component {
 const mapStateToProps = (state) => ({
     token: state.loginReducer.token,
     products: state.productReducer.products,
+    cart: state.cartReducer.cart,
     error: state.loginReducer.error,
     showError: state.errorReducer.show,
     loading: state.loadingReducer.loading
@@ -83,8 +84,8 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
     return {
-        getProductList: () => dispatch(ProductActions.getProductList()),
-        addProductToCart: (product) => dispatch(CartActions.addProductToCart(product))
+        getCartList: () => dispatch(CartActions.getAllCart()),
+        removeProductFromCart: (id) => dispatch(CartActions.deleteProductFromCart(id))
     }
 };
 
@@ -134,5 +135,5 @@ const styles = StyleSheet.create({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ProductListScreen);
+)(CartListScreen);
 
